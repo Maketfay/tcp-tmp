@@ -45,7 +45,15 @@ int main(int argc, char *argv[])
         }
 
         memset(buf, 0, BUF_SIZE);
-        int bytes_received = read(sock, buf, BUF_SIZE);
+        int total_bytes_received = 0;
+        int bytes_received;
+        while ((bytes_received = read(sock, buf + total_bytes_received, BUF_SIZE - total_bytes_received)) > 0) {
+            total_bytes_received += bytes_received;
+            if (buf[total_bytes_received - 1] == '\t') {
+                break;
+            }
+        }
+        //int bytes_received = read(sock, buf, BUF_SIZE);
         if (bytes_received == -1) {
             perror("Error receiving message from server");
             exit(EXIT_FAILURE);
